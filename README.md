@@ -14,11 +14,6 @@ gem "private_pub"
 gem "thin"
 ```
 
-Run the generator to create the initial files.
-
-```
-rails g private_pub:install
-```
 
 Next, start up Faye using the rackup file that was generated.
 
