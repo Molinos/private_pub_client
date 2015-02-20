@@ -3,8 +3,6 @@ require "net/http"
 require "net/https"
 require "json"
 
-require "private_pub/faye_extension"
-require "private_pub/engine" if defined? Rails
 
 module PrivatePub
   class Error < StandardError; end
@@ -55,13 +53,6 @@ module PrivatePub
       message
     end
 
-    # Returns a subscription hash to pass to the PrivatePub.sign call in JavaScript.
-    # Any options passed are merged to the hash.
-    def subscription(options = {})
-      sub = {:server => server_url, :timestamp => (Time.now.to_f * 1000).round}.merge(options)
-      sub[:signature] = Digest::SHA1.hexdigest([config[:secret_token], sub[:channel], sub[:timestamp]].join)
-      sub
-    end
 
     # Determine if the signature has expired given a timestamp.
     def signature_expired?(timestamp)
@@ -71,8 +62,7 @@ module PrivatePub
     # Returns the Faye Rack application.
     # Any options given are passed to the Faye::RackAdapter.
     def faye_client
-      binding.pry
-      Faye::Client.new(url)
+      Faye::Client.new(server_url)
     end
 
     # Return server url with random ports
